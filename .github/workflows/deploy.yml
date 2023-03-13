@@ -33,14 +33,15 @@ jobs:
           echo "${{ secrets.SSH_Bastion_KEY }}" > /tmp/Bastion.pem
 
       - name: Creating .ssh/config
-        run: echo "Host Bastion
-        Hostname ${{ secrets.SSH_BASTION_HOST }}
-        User ${{ secrets.SSH_BASTION_USER }}
-        IdentityFile /tmp/Bastion.pem
-Host Target
-        Hostname ${{ secrets.SSH_TARGET_HOST }}
-        User ${{ secrets.SSH_TARGET_USER }}
-        IdentityFile /tmp/Target.pem"
+        run: |
+          echo "Host Bastion
+            Hostname ${{ secrets.SSH_BASTION_HOST }}
+            User ${{ secrets.SSH_BASTION_USER }}
+            IdentityFile /tmp/Bastion.pem
+          Host Target
+            Hostname ${{ secrets.SSH_TARGET_HOST }}
+            User ${{ secrets.SSH_TARGET_USER }}
+            IdentityFile /tmp/Target.pem" >> ~/.ssh/config
 
       - name: Deploying with scp
         run: scp -J Bastion * Target:${{ secrets.DEST_TARGET_PATH }}
