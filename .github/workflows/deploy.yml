@@ -1,0 +1,16 @@
+# .github/workflows/build.yml
+name: Deploy
+
+on: push
+
+jobs:
+  deploy-ssh:
+    name: Deploy Via SSH
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: testing bash
+        run: |
+          curl gautham-nagendran.com
