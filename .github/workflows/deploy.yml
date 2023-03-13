@@ -19,7 +19,7 @@ jobs:
       - name: Adding to Known Hosts
         run: |
           mkdir ~/.ssh
-          echo "${{SSH_KNOWN_HOSTS}}" > ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
 
       - name: Deploying with scp
         run: scp -o "proxycommand ssh -W %h:%p -i /tmp/Bastion.pem ${{ secrets.SSH_BASTION_USER }}@${{ secrets.SSH_BASTION_HOST }}" -i /tmp/Target.pem index ${{ secrets.SSH_TARGET_USER }}@${{ secrets.SSH_TARGET_HOST }}:${{ secrets.DEST_TARGET_PATH }}
