@@ -26,5 +26,5 @@ jobs:
           pwd
 
       - name: Deploying with rsync
-        run: rsync -avz * ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+        run: rsync -avz * ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/
 
