@@ -15,6 +15,7 @@ jobs:
         run: |
           echo "${{ secrets.SSH_TARGET_KEY }}" > /tmp/Target.pem
           echo "${{ secrets.SSH_BASTION_KEY }}" > /tmp/Bastion.pem
+          chmod 400 /tmp/*.pem
 
       - name: Adding to Known Hosts
         run: |
@@ -23,3 +24,6 @@ jobs:
 
       - name: Deploying with scp
         run: scp -o "proxycommand ssh -W %h:%p -i /tmp/Bastion.pem ${{ secrets.SSH_BASTION_USER }}@${{ secrets.SSH_BASTION_HOST }}" -i /tmp/Target.pem index ${{ secrets.SSH_TARGET_USER }}@${{ secrets.SSH_TARGET_HOST }}:${{ secrets.DEST_TARGET_PATH }}
+
+      - name: Deleting Keys
+        run: rm /tmp/*.pem
