@@ -25,6 +25,6 @@ jobs:
           ls
           pwd
 
-      - name: Deploying with rsync
+      - name: Deploying with scp
         run: scp -r * ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/
 
