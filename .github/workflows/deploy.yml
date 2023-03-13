@@ -47,4 +47,3 @@ jobs:
 
       - name: Deploying with scp
         run: scp -J Bastion * Target:${{ secrets.DEST_TARGET_PATH }}
-
