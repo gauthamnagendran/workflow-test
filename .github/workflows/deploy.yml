@@ -11,6 +11,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
       
+      - name: Creating Known_hosts
+        run: touch ~/.ssh/known_hosts
+
       - name: Adding Bastion to Known Hosts
         run: ssh-keyscan -H ${{ secrets.SSH_BASTION_HOST }}  >> ~/.ssh/known_hosts
 
