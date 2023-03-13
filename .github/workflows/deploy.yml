@@ -11,26 +11,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
       
-      - name: Creating Known_hosts
-        run: |
-          mkdir ~/.ssh
-          touch ~/.ssh/known_hosts
-
       - name: Creating Key Files
         run: |
           echo "${{ secrets.SSH_TARGET_KEY }}" > /tmp/Target.pem
-          echo "${{ secrets.SSH_Bastion_KEY }}" > /tmp/Bastion.pem
-
-      - name: Creating .ssh/config
-        run: |
-          echo "Host Bastion
-            Hostname ${{ secrets.SSH_BASTION_HOST }}
-            User ${{ secrets.SSH_BASTION_USER }}
-            IdentityFile /tmp/Bastion.pem
-          Host Target
-            Hostname ${{ secrets.SSH_TARGET_HOST }}
-            User ${{ secrets.SSH_TARGET_USER }}
-            IdentityFile /tmp/Target.pem" >> ~/.ssh/config
+          echo "${{ secrets.SSH_BASTION_KEY }}" > /tmp/Bastion.pem
 
       - name: Deploying with scp
-        run: scp -J Bastion * Target:${{ secrets.DEST_TARGET_PATH }}
+        run: scp -o "proxycommand ssh -W %h:%p -i /tmp/Bastion.pem ${{ secrets.SSH_BASTION_USER }}@${{ secrets.SSH_BASTION_HOST }}" -i /tmp/Target.pem index ${{ secrets.SSH_TARGET_USER }}@${{ secrets.SSH_TARGET_HOST }}:${{ secrets.DEST_TARGET_PATH }}
