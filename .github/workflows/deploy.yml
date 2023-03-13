@@ -11,20 +11,37 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
       
+      - name : Install Bastion SSH Key
+        uses : shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_BASTION_KEY }}
+          known_hosts: unnecessary
+
       - name : Install SSH Key
         uses : shimataro/ssh-key-action@v2
         with:
-          key: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.SSH_TARGET_KEY }}
           known_hosts: unnecessary
 
       - name: Adding Known Hosts
-        run: ssh-keyscan -H ${{ secrets.SSH_HOST }}  >> ~/.ssh/known_hosts
+        run: ssh-keyscan -H ${{ secrets.SSH_TARGET_HOST }}  >> ~/.ssh/known_hosts
+        run: ssh-keyscan -H ${{ secrets.SSH_BASTION_HOST }}  >> ~/.ssh/known_hosts
 
-      - name: Basic
+      - name: Creating Key Files
         run: |
-          ls
-          pwd
+          echo "${{ secrets.SSH_TARGET_KEY }}" > /tmp/Target.pem
+          echo "${{ secrets.SSH_Bastion_KEY }}" > /tmp/Bastion.pem
+
+      - name: Creating .ssh/config
+        run: echo "Host Bastion
+        Hostname ${{ secrets.SSH_BASTION_HOST }}
+        User ${{ secrets.SSH_BASTION_USER }}
+        IdentityFile /tmp/Bastion.pem
+Host Target
+        Hostname ${{ secrets.SSH_TARGET_HOST }}
+        User ${{ secrets.SSH_TARGET_USER }}
+        IdentityFile /tmp/Target.pem"
 
       - name: Deploying with scp
-        run: scp -r * ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/
+        run: scp -J Bastion * Target:${{ secrets.DEST_TARGET_PATH }}
 
